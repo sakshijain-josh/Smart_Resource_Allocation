@@ -7,6 +7,12 @@
 # Ignore bundler config.
 /.bundle
 
+# Ignore docs
+/docs
+docs/AUTHENTICATION.md
+docs/PROJECT_STRUCTURE.md
+
+
 # Ignore all environment files.
 /.env*
 

@@ -31,18 +31,16 @@ class Ability
       can :read, Resource
 
       # === User Permissions ===
-      # Employees can read and update their own user profile
+      # Employees can read  their own user profile
       can :read, User, id: user.id
-      can :update, User, id: user.id
 
       # === Holiday Permissions ===
       # Employees can read holidays
       can :read, Holiday
 
       # === Notification Permissions ===
-      # Employees can read and update their own notifications
+      # Employees can read their own notifications
       can :read, Notification, user_id: user.id
-      can :update, Notification, user_id: user.id
     end
 
     # Define abilities for other roles or specific scenarios here
