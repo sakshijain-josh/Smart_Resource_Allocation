@@ -8,7 +8,7 @@
 /.bundle
 
 # Ignore docs
-/docs
+/.docs
 
 # Ignore all environment files.
 /.env*
