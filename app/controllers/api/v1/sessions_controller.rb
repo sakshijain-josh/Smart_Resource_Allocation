@@ -2,7 +2,7 @@ module Api
   module V1
     class SessionsController < Devise::SessionsController
       skip_before_action :verify_authenticity_token, raise: false
-      skip_before_action :authenticate_user!, only: [:create, :destroy]
+      skip_before_action :authenticate_user!, only: [:create]
       skip_before_action :verify_signed_out_user, only: [:destroy], raise: false
       
       respond_to :json
@@ -59,7 +59,7 @@ module Api
         end
       end
 
-      def respond_to_on_destroy
+      def respond_to_on_destroy(*)
         if request.headers['Authorization'].present?
           begin
             jwt_payload = JWT.decode(

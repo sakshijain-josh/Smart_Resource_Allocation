@@ -7,6 +7,9 @@
 # Ignore bundler config.
 /.bundle
 
+# Ignore docs
+/docs
+
 # Ignore all environment files.
 /.env*
 
