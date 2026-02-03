@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::API
   include ActionController::MimeResponds
 
-  before_action :authenticate_user!
+  before_action :require_authentication!
 
   def current_user
     return @current_user if @current_user
@@ -10,7 +10,7 @@ class ApplicationController < ActionController::API
     @current_user = warden.authenticate(:jwt, scope: :api_v1_user)
   end
 
-  def authenticate_user!
+  def require_authentication!
     render json: { error: 'Unauthorized', message: 'You need to sign in to access this resource' }, status: :unauthorized unless current_user
   end
 

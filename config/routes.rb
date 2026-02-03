@@ -5,6 +5,9 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # Root level swagger access
+  get 'swagger.yaml', to: 'api/v1/documentation#index', defaults: { format: 'yaml' }
+
   # API routes
   namespace :api do
     namespace :v1 do
@@ -27,6 +30,12 @@ Rails.application.routes.draw do
 
       # Admin-only user management
       resources :users, only: [:create]
+
+      # Resource management
+      resources :resources
+
+      # Documentation
+      get 'swagger', to: 'documentation#index', defaults: { format: 'yaml' }
     end
   end
 end

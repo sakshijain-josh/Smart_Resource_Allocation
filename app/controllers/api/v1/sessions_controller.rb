@@ -2,16 +2,16 @@ module Api
   module V1
     class SessionsController < Devise::SessionsController
       skip_before_action :verify_authenticity_token, raise: false
-      skip_before_action :authenticate_user!, only: [:create]
+      skip_before_action :require_authentication!, only: [:create], raise: false
       skip_before_action :verify_signed_out_user, only: [:destroy], raise: false
       
       respond_to :json
 
       # Override create to handle API authentication
       def create
-        # Handle both nested (params[:user]) and non-nested formats
-        email = params[:user]&.[](:email) || params[:email]
-        password = params[:user]&.[](:password) || params[:password]
+        # Handle simple, 'user', and 'session' formats
+        email = params[:email] || params.dig(:user, :email) || params.dig(:session, :email)
+        password = params[:password] || params.dig(:user, :password) || params.dig(:session, :password)
         
         user = User.find_by(email: email)
         

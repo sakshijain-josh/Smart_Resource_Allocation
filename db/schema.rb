@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_02_084814) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_02_175145) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -83,10 +83,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_02_084814) do
 
   create_table "resources", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.text "description"
     t.boolean "is_active"
+    t.string "location"
     t.string "name"
     t.jsonb "properties"
-    t.string "type"
+    t.string "resource_type"
     t.datetime "updated_at", null: false
     t.index ["properties"], name: "index_resources_on_properties", using: :gin
   end
