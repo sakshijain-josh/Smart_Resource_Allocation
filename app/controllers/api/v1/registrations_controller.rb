@@ -2,7 +2,7 @@ module Api
   module V1
     class RegistrationsController < ApplicationController
       respond_to :json
-      before_action :authenticate_user!
+      before_action :require_authentication!
 
       def show
         render json: {
