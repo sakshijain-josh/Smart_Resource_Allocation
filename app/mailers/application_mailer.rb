@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "from@example.com"
+  default from: "Smart Office Resource Manager <#{ENV.fetch('SMTP_USERNAME', 'notifications@resource-allocator.com')}>"
   layout "mailer"
 end

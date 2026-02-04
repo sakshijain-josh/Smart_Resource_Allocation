@@ -1,0 +1,11 @@
+New Booking Request
+===================
+
+A new booking request has been submitted by <%= @user.name %> (<%= @user.email %>).
+
+Resource: <%= @resource.name %> (<%= @resource.resource_type %>)
+Location: <%= @resource.location %>
+Start Time: <%= @booking.start_time.strftime("%B %d, %Y at %I:%M %p") %>
+End Time: <%= @booking.end_time.strftime("%B %d, %Y at %I:%M %p") %>
+
+Please login to the Admin dashboard to approve or reject this request.

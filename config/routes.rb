@@ -29,13 +29,29 @@ Rails.application.routes.draw do
       end
 
       # Admin-only user management
-      resources :users, only: [:create]
+      resources :users, only: [:create, :index, :destroy]
 
       # Resource management
-      resources :resources
+      resources :resources do
+        member do
+          get :availability
+        end
+      end
+      resources :bookings do
+        collection do
+          post :release_expired
+        end
+        member do
+          post :check_in
+        end
+      end
+      # Reports
+      namespace :reports do
+        get :resource_usage
+        get :user_bookings
+        get :peak_hours
+      end
 
-      # Documentation
-      get 'swagger', to: 'documentation#index', defaults: { format: 'yaml' }
     end
   end
 end

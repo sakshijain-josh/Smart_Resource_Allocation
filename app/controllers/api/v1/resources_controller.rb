@@ -5,18 +5,64 @@ module Api
       
       # load_and_authorize_resource is a CanCanCan helper that automatically
       # loads the resource and checks permissions based on Ability class
-      load_and_authorize_resource
+      load_and_authorize_resource param_method: :resource_params
 
       # GET /api/v1/resources
       def index
         # @resources is automatically loaded by load_and_authorize_resource
-        render json: @resources
+        
+        # Apply filters if present
+        @resources = @resources.where(resource_type: params[:resource_type]) if params[:resource_type].present?
+        @resources = @resources.where(location: params[:location]) if params[:location].present?
+        @resources = @resources.where(is_active: params[:is_active]) if params[:is_active].present?
+
+        # Pagination
+        limit = (params[:limit] || 10).to_i
+        offset = (params[:offset] || 0).to_i
+        
+        total_count = @resources.count
+        paginated_resources = @resources.limit(limit).offset(offset)
+
+        render json: {
+          resources: paginated_resources,
+          total: total_count,
+          limit: limit,
+          offset: offset,
+          has_more: (offset + limit) < total_count
+        }
       end
 
       # GET /api/v1/resources/:id
       def show
         # @resource is automatically loaded by load_and_authorize_resource
         render json: @resource
+      end
+
+      # GET /api/v1/resources/:id/availability
+      def availability
+        # @resource is loaded by load_and_authorize_resource
+        
+        # Get optional query parameters with robust parsing
+        begin
+          date = params[:date].present? ? Date.parse(params[:date].to_s) : Date.today
+        rescue ArgumentError, Date::Error
+          date = Date.today
+        end
+
+        duration = params[:duration].to_f
+        duration = 1.0 if duration <= 0
+        
+        # Calculate available slots
+        slots = @resource.available_slots(date, duration)
+        
+        # Render availability info
+        render json: {
+          resource_id: @resource.id,
+          resource_name: @resource.name,
+          query_date: date.to_s,
+          slot_duration_hours: duration,
+          available_slots: slots
+        }
       end
 
       # POST /api/v1/resources

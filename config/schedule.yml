@@ -1,0 +1,4 @@
+booking_auto_release:
+  cron: "*/2 * * * *"
+  class: "BookingAutoReleaseJob"
+  queue: default

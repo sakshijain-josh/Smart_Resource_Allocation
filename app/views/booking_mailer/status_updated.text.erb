@@ -1,0 +1,17 @@
+Booking Update
+==============
+
+Hello <%= @user.name %>,
+
+Your booking for <%= @resource.name %> has been <%= @booking.status %>.
+
+Details:
+Start Time: <%= @booking.start_time.strftime("%B %d, %Y at %I:%M %p") %>
+End Time: <%= @booking.end_time.strftime("%B %d, %Y at %I:%M %p") %>
+
+<% if @booking.admin_note.present? %>
+Admin Note:
+<%= @booking.admin_note %>
+<% end %>
+
+Thank you for using the Smart Office Resource management System.

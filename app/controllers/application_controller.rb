@@ -11,7 +11,24 @@ class ApplicationController < ActionController::API
   end
 
   def require_authentication!
-    render json: { error: 'Unauthorized', message: 'You need to sign in to access this resource' }, status: :unauthorized unless current_user
+    render json: { 
+      error: 'Unauthorized', 
+      message: 'You need to sign in to access this resource' 
+    }, 
+    status: :unauthorized unless current_user
+  end
+
+  protected
+
+  def enforce_flat_params!
+    # Check if the root key of the controller exists (e.g., params[:resource] or params[:booking])
+    resource_key = controller_name.singularize
+    if params.has_key?(resource_key) && params[resource_key].is_a?(Hash)
+      render json: { 
+        error: 'Bad Request', 
+        message: "Nested parameters are not allowed. Please provide attributes in a flat structure. Found nested key: '#{resource_key}'" 
+      }, status: :bad_request
+    end
   end
 
   private
