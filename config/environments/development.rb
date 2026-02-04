@@ -38,6 +38,17 @@ Rails.application.configure do
   # Set localhost to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
 
+  # SMTP Configuration for actual email sending
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address:              ENV.fetch('SMTP_HOST', 'smtp.gmail.com'),
+    port:                 ENV.fetch('SMTP_PORT', 587).to_i,
+    user_name:            ENV.fetch('SMTP_USERNAME', nil),
+    password:             ENV.fetch('SMTP_PASSWORD', nil),
+    authentication:       'plain',
+    enable_starttls_auto: true
+  }
+
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 

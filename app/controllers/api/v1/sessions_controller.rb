@@ -9,9 +9,8 @@ module Api
 
       # Override create to handle API authentication
       def create
-        # Handle simple, 'user', and 'session' formats
-        email = params[:email] || params.dig(:user, :email) || params.dig(:session, :email)
-        password = params[:password] || params.dig(:user, :password) || params.dig(:session, :password)
+        email = params[:email]
+        password = params[:password]
         
         user = User.find_by(email: email)
         
@@ -21,13 +20,7 @@ module Api
           
           render json: {
             token: request.env['warden-jwt_auth.token'],
-            user: {
-              id: user.id,
-              employee_id: user.employee_id,
-              name: user.name,
-              email: user.email,
-              role: user.role
-            },
+            user: user,
             expires_at: 24.hours.from_now
           }, status: :ok
         else
@@ -43,13 +36,7 @@ module Api
         if resource.persisted?
           render json: {
             token: request.env['warden-jwt_auth.token'],
-            user: {
-              id: resource.id,
-              employee_id: resource.employee_id,
-              name: resource.name,
-              email: resource.email,
-              role: resource.role
-            },
+            user: resource,
             expires_at: 24.hours.from_now
           }, status: :ok
         else

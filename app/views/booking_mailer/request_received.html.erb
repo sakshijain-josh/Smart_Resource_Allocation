@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>New Booking Request</h1>
+    <p>
+      A new booking request has been submitted by <%= @user.name %> (<%= @user.email %>).
+    </p>
+    <p>
+      <strong>Resource:</strong> <%= @resource.name %> (<%= @resource.resource_type %>)<br>
+      <strong>Location:</strong> <%= @resource.location %><br>
+      <strong>Start Time:</strong> <%= @booking.start_time.strftime("%B %d, %Y at %I:%M %p") %><br>
+      <strong>End Time:</strong> <%= @booking.end_time.strftime("%B %d, %Y at %I:%M %p") %>
+    </p>
+    <p>
+      Please login to the Admin dashboard to approve or reject this request.
+    </p>
+  </body>
+</html>

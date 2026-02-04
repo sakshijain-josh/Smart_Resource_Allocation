@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Booking Update</h1>
+    <p>
+      Hello <%= @user.name %>,
+    </p>
+    <p>
+      Your booking for <strong><%= @resource.name %></strong> has been <strong><%= @booking.status %></strong>.
+    </p>
+    
+    <p>
+      <strong>Details:</strong><br>
+      <strong>Start Time:</strong> <%= @booking.start_time.strftime("%B %d, %Y at %I:%M %p") %><br>
+      <strong>End Time:</strong> <%= @booking.end_time.strftime("%B %d, %Y at %I:%M %p") %>
+    </p>
+
+    <% if @booking.admin_note.present? %>
+      <p>
+        <strong>Admin Note:</strong><br>
+        <%= @booking.admin_note %>
+      </p>
+    <% end %>
+
+    <p>
+      Thank you for using the Smart Office Resource management System.
+    </p>
+  </body>
+</html>

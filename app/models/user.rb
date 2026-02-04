@@ -10,6 +10,9 @@ class User < ApplicationRecord
          :timeoutable,
          jwt_revocation_strategy: JwtDenylist
 
+  # Callbacks
+  after_create_commit :send_welcome_email
+
   # Validations
   validates :employee_id, presence: true, uniqueness: true
   validates :name, presence: true
@@ -23,5 +26,24 @@ class User < ApplicationRecord
 
   def employee?
     role == 'employee'
+  end
+
+  # --- JSON Ordering ---
+  def as_json(options = {})
+    {
+      id: id,
+      employee_id: employee_id,
+      name: name,
+      email: email,
+      role: role,
+      created_at: created_at,
+      updated_at: updated_at
+    }
+  end
+
+  private
+
+  def send_welcome_email
+    UserMailer.welcome_email(self).deliver_later
   end
 end
