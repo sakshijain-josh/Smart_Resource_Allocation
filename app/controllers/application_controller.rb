@@ -2,12 +2,15 @@ class ApplicationController < ActionController::API
   include ActionController::MimeResponds
 
   before_action :require_authentication!
-
+ 
   def current_user
     return @current_user if @current_user
     
+    w = warden
+    return nil unless w
+
     # Use the correct scope based on Devise mapping (:api_v1_user)
-    @current_user = warden.authenticate(:jwt, scope: :api_v1_user)
+    @current_user = w.authenticate(:jwt, scope: :api_v1_user) || w.user(scope: :api_v1_user)
   end
 
   def require_authentication!
@@ -34,7 +37,13 @@ class ApplicationController < ActionController::API
   private
 
   def warden
-    request.env['warden']
+    begin
+      request.env['warden'] if request && request.respond_to?(:env) && request.env
+    rescue => e
+      puts "WARDEN ERROR: #{e.message}"
+      puts e.backtrace.first(5)
+      nil
+    end
   end
 
   # CanCanCan error handling
