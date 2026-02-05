@@ -10,30 +10,30 @@ puts "Seeding database..."
 
 # 1. Users
 admin = User.find_or_create_by!(email: 'legacythreads11@gmail.com') do |u|
-  u.employee_id = 'ADMIN_001'
-  u.name = 'System Admin'
-  u.password = 'password123'
-  u.password_confirmation = 'password123'
+  u.employee_id = 'EMP001'
+  u.name = 'ADMIN'
+  u.password = '123456789'
+  u.password_confirmation = '123456789'
   u.role = 'admin'
 end
 puts "Created admin: #{admin.email}"
 
 employee = User.find_or_create_by!(email: '1011jainsakshi@gmail.com') do |u|
-  u.employee_id = 'EMP_1011'
+  u.employee_id = 'EMP002'
   u.name = 'Sakshi Jain'
-  u.password = 'password123'
-  u.password_confirmation = 'password123'
+  u.password = '123456789'
+  u.password_confirmation = '123456789'
   u.role = 'employee'
 end
 puts "Created employee: #{employee.email}"
 
 # 2. Resources (Meeting Rooms)
 meeting_rooms = [
-  { name: 'Garnet', properties: { capacity: 4 }, location: 'Floor 1', resource_type: 'meeting-room' },
-  { name: 'Topaz', properties: { capacity: 8 }, location: 'Floor 1', resource_type: 'meeting-room' },
-  { name: 'Emerald', properties: { capacity: 8 }, location: 'Floor 2', resource_type: 'meeting-room' },
-  { name: 'Citrine', properties: { capacity: 4 }, location: 'Floor 2', resource_type: 'meeting-room' },
-  { name: 'Sapphire', properties: { capacity: 8 }, location: 'Floor 3', resource_type: 'meeting-room' }
+  { name: 'Garnet', properties: { capacity: 4 }, location: 'Floor 6', resource_type: 'meeting-room' },
+  { name: 'Topaz', properties: { capacity: 8 }, location: 'Floor 6', resource_type: 'meeting-room' },
+  { name: 'Emerald', properties: { capacity: 8 }, location: 'Floor 6', resource_type: 'meeting-room' },
+  { name: 'Citrine', properties: { capacity: 4 }, location: 'Floor 6', resource_type: 'meeting-room' },
+  { name: 'Sapphire', properties: { capacity: 8 }, location: 'Floor 6', resource_type: 'meeting-room' }
 ]
 
 meeting_rooms.each do |room|
@@ -62,7 +62,42 @@ puts "Seeded Turf."
 end
 puts "Seeded 6 HP Laptops."
 
-# 5. Resources (Phones - 6 Mixed)
+# 5. Resources (Laptops - 3 Dell)
+3.times do |i|
+  Resource.create!(
+    name: "Dell Laptop #{i+1}",
+    resource_type: 'laptop',
+    location: 'IT Storage',
+    properties: {
+      os: 'Ubuntu 22.04',
+      ram: '8GB',
+      storage: '512GB SSD',
+      serial_number: "DELL-UBUNTU-#{1000 + i}"
+    },
+    is_active: true
+  )
+end
+puts "Seeded 3 Dell Laptops."
+
+
+# 6. Resources (Laptops - 3 Lenovo)
+3.times do |i|
+  Resource.create!(
+    name: "Lenovo Laptop #{i+1}",
+    resource_type: 'laptop',
+    location: 'IT Storage',
+    properties: {
+      os: 'Windows 11',
+      ram: '16GB',
+      storage: '1TB SSD',
+      serial_number: "Lenovo-WINDOWS-#{1000 + i}"
+    },
+    is_active: true
+  )
+end
+puts "Seeded 3 Lenovo Laptops."
+
+# 7. Resources (Phones - 6 Mixed)
 phones = [
   { name: 'iPhone 14 Pro', metadata: { os: 'iOS 17', ram: '16GB', storage: '256GB' } },
   { name: 'iPhone 15', metadata: { os: 'iOS 17', ram: '8GB', storage: '128GB' } },
@@ -83,7 +118,7 @@ phones.each do |phone|
 end
 puts "Seeded 6 Phones (iOS & Android)."
 
-# 6. Holidays (Indian National Holidays 2026)
+# 8. Holidays (Indian National Holidays 2026)
 holidays = [
   { name: 'Republic Day', holiday_date: '2026-01-26' },
   { name: 'Holi', holiday_date: '2026-03-03' },

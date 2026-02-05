@@ -161,11 +161,11 @@ class Booking < ApplicationRecord
   end
 
   def notify_admin_of_request
-    BookingMailer.request_received(self).deliver_later
+    BookingMailer.request_received(self).deliver_now
   end
 
   def notify_user_of_status_change
-    BookingMailer.status_updated(self).deliver_later
+    BookingMailer.status_updated(self).deliver_now
   end
 
   # --- Class Methods for Maintenance ---
