@@ -10,6 +10,10 @@ module Api
         # Filtering: Employees only see their own bookings
         @bookings = @bookings.where(user_id: current_user.id) unless current_user.admin?
         
+        # Apply filters if present
+        @bookings = @bookings.where(status: params[:status]) if params[:status].present?
+        @bookings = @bookings.where(resource_id: params[:resource_id]) if params[:resource_id].present?
+
         # Pagination
         limit = (params[:limit] || 10).to_i
         offset = (params[:offset] || 0).to_i
