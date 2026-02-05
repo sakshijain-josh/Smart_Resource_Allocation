@@ -83,7 +83,6 @@ GET    /api/v1/users/:id  # Get user
 DELETE /api/v1/users/:id  # Delete user
 ```
 
-See [Authentication Documentation](./docs/AUTHENTICATION.md) for detailed API usage and examples.
 
 ## 🏗️ Technology Stack
 
@@ -114,6 +113,6 @@ See [Authentication Documentation](./docs/AUTHENTICATION.md) for detailed API us
 6. **Audit Logs**: Immutable trail of all administrative actions
 
 ## 🤝 Contributions:
-Backend was developed by - [@sakshi04_ui](https://github.com/sakshi04-ui)
-Frontend was developed by - @sobiyas22
+- Backend was developed by - [@sakshi04_ui](https://github.com/sakshi04-ui)
+- Frontend was developed by - @sobiyas22
 
