@@ -28,7 +28,7 @@ class Ability
 
       # === Resource Permissions ===
       # Employees can read resources (to see what's available)
-      can :read, Resource
+      can [:read, :availability], Resource
 
       # === User Permissions ===
       # Employees can read  their own user profile

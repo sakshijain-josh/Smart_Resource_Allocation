@@ -3,13 +3,12 @@ module Api
     class ResourcesController < ApplicationController
       # before_action :authenticate_user! is inherited from ApplicationController
       
-      # load_and_authorize_resource is a CanCanCan helper that automatically
-      # loads the resource and checks permissions based on Ability class
-      load_and_authorize_resource param_method: :resource_params
-
+      before_action :set_resource, only: [:show, :availability, :update, :destroy]
+      
       # GET /api/v1/resources
       def index
-        # @resources is automatically loaded by load_and_authorize_resource
+        authorize! :read, Resource
+        @resources = Resource.all
         
         # Apply filters if present
         @resources = @resources.where(resource_type: params[:resource_type]) if params[:resource_type].present?
@@ -34,13 +33,13 @@ module Api
 
       # GET /api/v1/resources/:id
       def show
-        # @resource is automatically loaded by load_and_authorize_resource
+        authorize! :read, @resource
         render json: @resource
       end
 
       # GET /api/v1/resources/:id/availability
       def availability
-        # @resource is loaded by load_and_authorize_resource
+        authorize! :availability, @resource
         
         # Get optional query parameters with robust parsing
         begin
@@ -67,7 +66,8 @@ module Api
 
       # POST /api/v1/resources
       def create
-        # @resource is initialized with params by load_and_authorize_resource
+        @resource = Resource.new(resource_params)
+        authorize! :create, @resource
         if @resource.save
           render json: @resource, status: :created
         else
@@ -77,7 +77,7 @@ module Api
 
       # PATCH/PUT /api/v1/resources/:id
       def update
-        # @resource is loaded by load_and_authorize_resource
+        authorize! :update, @resource
         if @resource.update(resource_params)
           render json: @resource
         else
@@ -87,12 +87,16 @@ module Api
 
       # DELETE /api/v1/resources/:id
       def destroy
-        # @resource is loaded by load_and_authorize_resource
+        authorize! :destroy, @resource
         @resource.destroy
         head :no_content
       end
 
       private
+
+      def set_resource
+        @resource = Resource.find(params[:id])
+      end
 
       # Strong params to protect against mass assignment
       def resource_params

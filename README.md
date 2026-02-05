@@ -115,4 +115,3 @@ DELETE /api/v1/users/:id  # Delete user
 ## 🤝 Contributions:
 - Backend was developed by - [@sakshi04_ui](https://github.com/sakshi04-ui)
 - Frontend was developed by - @sobiyas22
-
