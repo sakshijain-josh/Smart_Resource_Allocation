@@ -12,16 +12,8 @@ A controlled-access web platform for managing shared office resources through an
 - **Smart Conflict Resolution**: Auto-reject conflicting bookings when one is approved
 - **Check-in Enforcement**: 15-minute grace period with auto-release
 - **Audit Trail**: Immutable logs of all state changes
-- **Notifications**: Email + in-app notifications for booking updates
+- **Notifications**: Email notifications for booking updates
 
-## 📁 Documentation
-
-Comprehensive documentation is available in the [`/docs`](./docs) folder:
-
-- **[Project Overview](./docs/PROJECT_OVERVIEW.md)** - System description and business rules
-- **[Authentication](./docs/AUTHENTICATION.md)** - Auth flow, JWT details, API endpoints
-- **[Database Schema](./docs/DATABASE_SCHEMA.md)** - Table structure and relationships
-- **[Project Structure](./docs/PROJECT_STRUCTURE.md)** - Directory organization and file purposes
 
 ## 🚀 Quick Start
 
@@ -52,8 +44,8 @@ The API will be available at `http://localhost:3000`
 
 After running `db:seed`:
 
-- **Email**: `admin@company.com`
-- **Password**: `admin123`
+- **Email**: `legacythreads11@gmail.com`
+- **Password**: `123456789`
 
 ⚠️ **Change these credentials in production!**
 
@@ -88,7 +80,6 @@ GET /api/v1/auth/me
 POST   /api/v1/users      # Create user
 GET    /api/v1/users      # List users
 GET    /api/v1/users/:id  # Get user
-PATCH  /api/v1/users/:id  # Update user
 DELETE /api/v1/users/:id  # Delete user
 ```
 
@@ -98,44 +89,12 @@ See [Authentication Documentation](./docs/AUTHENTICATION.md) for detailed API us
 
 - **Backend**: Ruby on Rails 8.1 (API mode)
 - **Database**: PostgreSQL with UUID primary keys
-- **Authentication**: JWT + Bcrypt
-- **Background Jobs**: Sidekiq (with Solid Queue)
+- **Authentication**: Devise
+- **Authorization**: CanCanCan
+- **Background Jobs**: Sidekiq 
 - **Testing**: Minitest
 
-## 🗓️ Development Roadmap
 
-### Phase 1: Authentication ✅ _(Planned)_
-
-- [x] Documentation structure
-- [ ] JWT service implementation
-- [ ] Auth controllers and user management
-- [ ] Role-based authorization
-- [ ] Comprehensive testing
-
-### Phase 2: Resource Management _(Planned)_
-
-- [ ] Resource CRUD operations
-- [ ] Resource search and filtering
-- [ ] Resource availability checks
-
-### Phase 3: Booking System _(Planned)_
-
-- [ ] Booking request creation
-- [ ] Approval workflow
-- [ ] Conflict detection and resolution
-- [ ] Check-in functionality
-
-### Phase 4: Automation _(Planned)_
-
-- [ ] Booking reminders (15 min before)
-- [ ] Auto-release unchecked bookings
-- [ ] Pending request expiry
-
-### Phase 5: Notifications _(Planned)_
-
-- [ ] Email notifications
-- [ ] In-app notifications
-- [ ] Notification preferences
 
 ## 📊 System Constraints
 
@@ -154,14 +113,7 @@ See [Authentication Documentation](./docs/AUTHENTICATION.md) for detailed API us
 5. **HTTPS Required**: All production traffic must use HTTPS
 6. **Audit Logs**: Immutable trail of all administrative actions
 
-## 🤝 Contributing
+## 🤝 Contributions:
+Backend was developed by - [@sakshi04_ui](https://github.com/sakshi04-ui)
+Frontend was developed by - @sobiyas22
 
-This is an internal enterprise system. Please follow the existing code style and ensure all tests pass before submitting changes.
-
-## 📝 License
-
-Internal use only - not for public distribution.
-
-## 🆘 Support
-
-For issues or questions, please refer to the documentation in the `/docs` folder or contact the development team.
