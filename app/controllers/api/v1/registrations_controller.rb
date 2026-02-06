@@ -4,6 +4,7 @@ module Api
       respond_to :json
       before_action :require_authentication!
 
+      # why do we have show method here
       def show
         render json: current_user, status: :ok
       end
