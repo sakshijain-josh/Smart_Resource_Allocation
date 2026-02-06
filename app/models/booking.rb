@@ -40,7 +40,10 @@ class Booking < ApplicationRecord
     {
       id: id,
       user_id: user_id,
+      employee_id: user&.employee_id,
+      employee_name: user&.name,
       resource_id: resource_id,
+      resource_name: resource&.name,
       status: status,
       start_time: start_time,
       end_time: end_time,

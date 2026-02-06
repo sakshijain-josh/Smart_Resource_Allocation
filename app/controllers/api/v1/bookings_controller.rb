@@ -3,9 +3,16 @@ module Api
     class BookingsController < ApplicationController
       load_and_authorize_resource param_method: :booking_params
 
+      #So in index, before your method body runs, CanCanCan already executes logic similar to:
+      #@bookings = Booking.accessible_by(current_ability)
+
       # GET /api/v1/bookings
       def index
         # @bookings is automatically loaded by load_and_authorize_resource
+        
+
+        # That route maps to: Api::V1::BookingsController#index
+        #The filtering happens inside the index method after routing is already resolved.
         
         # Filtering: Employees only see their own bookings
         @bookings = @bookings.where(user_id: current_user.id) unless current_user.admin?
@@ -18,7 +25,8 @@ module Api
         limit = (params[:limit] || 10).to_i
         offset = (params[:offset] || 0).to_i
         
-        # Preload associations to prevent N+1 and ensure data availability
+        # Preload associations to prevent N+1 and ensure data availability -> eager loading
+        # When you fetch bookings fetch user and resource in advance
         @bookings = @bookings.includes(:user, :resource)
         
         total_count = @bookings.count
