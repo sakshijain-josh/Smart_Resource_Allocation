@@ -19,7 +19,7 @@ class CreateBookings < ActiveRecord::Migration[8.1]
     end
 
     add_index :bookings, :status
-    add_index :bookings, [:user_id, :start_time]
-    add_index :bookings, [:resource_id, :start_time, :end_time]
+    add_index :bookings, [ :user_id, :start_time ]
+    add_index :bookings, [ :resource_id, :start_time, :end_time ]
   end
 end

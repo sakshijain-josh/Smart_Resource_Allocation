@@ -12,7 +12,7 @@ class BookingMailerTest < ActionMailer::TestCase
       email.deliver_now
     end
 
-    assert_equal [BookingMailer::ADMIN_EMAIL], email.to
+    assert_equal [ BookingMailer::ADMIN_EMAIL ], email.to
     assert_match /New Booking Request/, email.subject
     assert_match @booking.user.name, email.body.encoded
     puts "✅ PASS: Admin receives notification of new booking request"
@@ -26,7 +26,7 @@ class BookingMailerTest < ActionMailer::TestCase
       email.deliver_now
     end
 
-    assert_equal [@booking.user.email], email.to
+    assert_equal [ @booking.user.email ], email.to
     assert_match /Booking Update/, email.subject
     assert_match "approved", email.body.encoded
     puts "✅ PASS: User receives notification when booking status changes"

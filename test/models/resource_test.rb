@@ -2,29 +2,29 @@ require "test_helper"
 
 class ResourceTest < ActiveSupport::TestCase
   test "valid resource" do
-    resource = build(:resource, resource_type: 'meeting-room')
+    resource = build(:resource, resource_type: "meeting-room")
     assert resource.valid?
     puts "✅ PASS: Valid resource can be created"
   end
 
   test "invalid without name" do
-    resource = build(:resource, name: nil, resource_type: 'meeting-room')
+    resource = build(:resource, name: nil, resource_type: "meeting-room")
     assert_not resource.valid?
     puts "✅ PASS: Resource invalid without name"
   end
 
   test "invalid with duplicate name" do
-    create(:resource, name: "Meeting Room A", resource_type: 'meeting-room')
-    resource2 = build(:resource, name: "Meeting Room A", resource_type: 'meeting-room')
+    create(:resource, name: "Meeting Room A", resource_type: "meeting-room")
+    resource2 = build(:resource, name: "Meeting Room A", resource_type: "meeting-room")
     assert_not resource2.valid?
     puts "✅ PASS: Resource name must be unique"
   end
 
   test "only one Turf resource allowed" do
-    create(:resource, resource_type: 'turf')
-    turf2 = build(:resource, resource_type: 'turf')
+    create(:resource, resource_type: "turf")
+    turf2 = build(:resource, resource_type: "turf")
     assert_not turf2.valid?
-    assert_includes turf2.errors[:resource_type], 'only one Turf resource is allowed'
+    assert_includes turf2.errors[:resource_type], "only one Turf resource is allowed"
     puts "✅ PASS: Turf uniqueness enforced (Edge Case: Singleton Resource)"
   end
 
@@ -47,7 +47,7 @@ class ResourceTest < ActiveSupport::TestCase
 
     slots = resource.available_slots(Date.today)
     ten_am_slot = slots.find { |s| s[:start_time].hour == 10 }
-    
+
     assert_not ten_am_slot[:available], "Slot at 10 AM should be booked"
     assert_equal user.name, ten_am_slot[:booked_by]
     puts "✅ PASS: available_slots correctly identifies overlapping approved bookings"

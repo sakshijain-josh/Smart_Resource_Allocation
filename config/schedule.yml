@@ -1,4 +1,4 @@
 booking_auto_release:
-  cron: "*/2 * * * *"
+  cron: "<%= ENV.fetch('AUTO_RELEASE_CRON', '*/2 * * * *') %>"
   class: "BookingAutoReleaseJob"
   queue: default

@@ -4,7 +4,7 @@ class Api::V1::ResourcesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @admin = create(:user, :admin)
     @employee = create(:user)
-    @resource = create(:resource, name: "Meeting Room X", resource_type: 'meeting-room')
+    @resource = create(:resource, name: "Meeting Room X", resource_type: "meeting-room")
   end
 
   test "should get index" do
@@ -24,8 +24,8 @@ class Api::V1::ResourcesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should show availability" do
-    get "/api/v1/resources/#{@resource.id}/availability", 
-        headers: auth_headers(@employee), 
+    get "/api/v1/resources/#{@resource.id}/availability",
+        headers: auth_headers(@employee),
         as: :json
     assert_response :success
     json = JSON.parse(response.body)

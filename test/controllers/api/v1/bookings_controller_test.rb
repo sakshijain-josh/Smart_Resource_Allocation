@@ -4,7 +4,7 @@ class Api::V1::BookingsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @admin = create(:user, :admin)
     @employee = create(:user)
-    @resource = create(:resource, resource_type: 'meeting-room')
+    @resource = create(:resource, resource_type: "meeting-room")
     @booking = create(:booking, user: @employee, resource: @resource)
   end
 

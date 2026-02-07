@@ -2,7 +2,7 @@ class Booking < ApplicationRecord
   belongs_to :user
   belongs_to :resource
   has_many :audit_logs, dependent: :destroy
-  
+
   # Virtual attribute to track who performed the status change
   attr_accessor :performer_id
 
@@ -19,7 +19,7 @@ class Booking < ApplicationRecord
   after_initialize :set_default_status, if: :new_record?
   before_save :set_timestamps_on_status_change
   after_save :create_audit_log, if: :saved_change_to_status?
-  
+
   # Notification hooks
   after_create_commit :notify_admin_of_request
   after_update_commit :notify_user_of_status_change, if: -> { saved_change_to_status? || saved_change_to_start_time? || saved_change_to_end_time? || saved_change_to_resource_id? }
@@ -64,7 +64,7 @@ class Booking < ApplicationRecord
             .where(is_active: true)
             .reject do |r|
               r.bookings.where(status: :approved)
-                        .where('start_time < ? AND end_time > ?', end_time, start_time)
+                        .where("start_time < ? AND end_time > ?", end_time, start_time)
                         .exists?
             end
   end
@@ -100,10 +100,13 @@ class Booking < ApplicationRecord
 
   def within_business_hours
     return if start_time.blank? || end_time.blank?
-    
-    # Check if start/end time is within 9 AM to 6 PM
-    if start_time.hour < 9 || end_time.hour > 18 || (end_time.hour == 18 && end_time.min > 0)
-      errors.add(:base, "Bookings are only allowed between 9:00 AM and 6:00 PM")
+
+    start_hour = ENV.fetch("BUSINESS_HOURS_START", 9).to_i
+    end_hour = ENV.fetch("BUSINESS_HOURS_END", 18).to_i
+
+    # Check if start/end time is within allowed hours
+    if start_time.hour < start_hour || end_time.hour > end_hour || (end_time.hour == end_hour && end_time.min > 0)
+      errors.add(:base, "Bookings are only allowed between #{start_hour}:00 and #{end_hour}:00")
     end
   end
 
@@ -129,7 +132,7 @@ class Booking < ApplicationRecord
     overlapping_bookings = resource.bookings
                                    .where(status: :approved)
                                    .where.not(id: id)
-                                   .where('start_time < ? AND end_time > ?', end_time, start_time)
+                                   .where("start_time < ? AND end_time > ?", end_time, start_time)
 
     if overlapping_bookings.exists?
       errors.add(:base, "This resource is already booked (Approved) for the selected time slot")
@@ -174,11 +177,12 @@ class Booking < ApplicationRecord
   # --- Class Methods for Maintenance ---
 
   def self.release_expired_bookings
-    # Find active, approved bookings where start_time was more than 15 mins ago
+    # Find active, approved bookings where start_time was more than threshold mins ago
     # but checked_in_at is still nil
-    threshold = 15.minutes.ago
+    threshold_mins = ENV.fetch("AUTO_RELEASE_THRESHOLD_MINUTES", 15).to_i
+    threshold = threshold_mins.minutes.ago
     expired_bookings = where(status: :approved, checked_in_at: nil)
-                       .where('start_time < ?', threshold)
+                       .where("start_time < ?", threshold)
 
     count = 0
     expired_bookings.find_each do |booking|

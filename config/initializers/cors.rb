@@ -8,13 +8,12 @@
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
     # Allow requests from any origin in development (change for production)
-    origins '*'
+    origins "*"
 
-    resource '*',
+    resource "*",
       headers: :any,
-      methods: [:get, :post, :put, :patch, :delete, :options, :head],
-      expose: ['Authorization'], # Expose Authorization header to frontend
+      methods: [ :get, :post, :put, :patch, :delete, :options, :head ],
+      expose: [ "Authorization" ], # Expose Authorization header to frontend
       credentials: false
   end
 end
-

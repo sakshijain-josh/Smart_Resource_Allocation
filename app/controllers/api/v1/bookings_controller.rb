@@ -3,35 +3,35 @@ module Api
     class BookingsController < ApplicationController
       load_and_authorize_resource param_method: :booking_params
 
-      #So in index, before your method body runs, CanCanCan already executes logic similar to:
-      #@bookings = Booking.accessible_by(current_ability)
+      # So in index, before your method body runs, CanCanCan already executes logic similar to:
+      # @bookings = Booking.accessible_by(current_ability)
 
       # GET /api/v1/bookings
       def index
         # @bookings is automatically loaded by load_and_authorize_resource
-        
+
 
         # That route maps to: Api::V1::BookingsController#index
-        #The filtering happens inside the index method after routing is already resolved.
-        
+        # The filtering happens inside the index method after routing is already resolved.
+
         # Filtering: Employees only see their own bookings
         @bookings = @bookings.where(user_id: current_user.id) unless current_user.admin?
-        
+
         # Apply filters if present
         @bookings = @bookings.where(status: params[:status]) if params[:status].present?
         @bookings = @bookings.where(resource_id: params[:resource_id]) if params[:resource_id].present?
 
         # Pagination
-        limit = (params[:limit] || 10).to_i
+        limit = (params[:limit] || ENV.fetch("DEFAULT_API_LIMIT", 10)).to_i
         offset = (params[:offset] || 0).to_i
-        
+
         # Preload associations to prevent N+1 and ensure data availability -> eager loading
         # When you fetch bookings fetch user and resource in advance
         @bookings = @bookings.includes(:user, :resource)
-        
+
         total_count = @bookings.count
         paginated_bookings = @bookings.order(created_at: :desc).limit(limit).offset(offset)
-        
+
         render json: {
           bookings: paginated_bookings,
           total: total_count,
@@ -51,20 +51,20 @@ module Api
         # Use current_user if user_id is not provided or if user is not admin
         @booking.user_id = current_user.id unless current_user.admin? && params[:user_id].present?
         @booking.performer_id = current_user.id
-        
+
         if @booking.save
           render json: @booking, status: :created
         else
           response = { errors: @booking.errors.full_messages }
-          
+
           # Add suggestions if there's an overlap conflict
           if @booking.errors.added?(:base, "This resource is already booked (Approved) for the selected time slot")
             response[:suggestions] = {
-              available_resources: @booking.suggest_alternative_resources.as_json(only: [:id, :name, :resource_type, :location]),
+              available_resources: @booking.suggest_alternative_resources.as_json(only: [ :id, :name, :resource_type, :location ]),
               available_slots: @booking.suggest_alternative_slots
             }
           end
-          
+
           render json: response, status: :unprocessable_entity
         end
       end

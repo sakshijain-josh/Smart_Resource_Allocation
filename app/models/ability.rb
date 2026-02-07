@@ -13,22 +13,22 @@ class Ability
       # === Booking Permissions ===
       # Employees can read all bookings (to see availability)
       can :read, Booking
-      
+
       # Employees can create bookings
       can :create, Booking
-      
+
       # Employees can update their own pending bookings
-      can :update, Booking, user_id: user.id, status: 'pending'
-      
+      can :update, Booking, user_id: user.id, status: "pending"
+
       # Employees can cancel their own pending or approved bookings
-      can :destroy, Booking, user_id: user.id, status: ['pending', 'approved']
-      
+      can :destroy, Booking, user_id: user.id, status: [ "pending", "approved" ]
+
       # Employees can check-in to their own approved bookings
-      can :check_in, Booking, user_id: user.id, status: 'approved'
+      can :check_in, Booking, user_id: user.id, status: "approved"
 
       # === Resource Permissions ===
       # Employees can read resources (to see what's available)
-      can [:read, :availability], Resource
+      can [ :read, :availability ], Resource
 
       # === User Permissions ===
       # Employees can read  their own user profile
@@ -46,4 +46,3 @@ class Ability
     # Define abilities for other roles or specific scenarios here
   end
 end
-
