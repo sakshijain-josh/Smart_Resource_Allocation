@@ -21,9 +21,9 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "admin can create user" do
-    assert_difference 'User.count', 1 do
+    assert_difference "User.count", 1 do
       post api_v1_users_url,
-           params: { employee_id: 'EMP999', name: 'New Joiner', email: 'new@example.com', password: 'password', role: 'employee' },
+           params: { employee_id: "EMP999", name: "New Joiner", email: "new@example.com", password: "password", role: "employee" },
            headers: auth_headers(@admin),
            as: :json
     end
@@ -38,7 +38,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "admin can delete employee" do
-    assert_difference 'User.count', -1 do
+    assert_difference "User.count", -1 do
       delete api_v1_user_url(@employee), headers: auth_headers(@admin), as: :json
     end
     assert_response :ok

@@ -2,12 +2,12 @@ FactoryBot.define do
   factory :user do
     name { Faker::Name.name }
     email { Faker::Internet.unique.email }
-    password { 'password123' }
-    role { 'employee' }
+    password { "password123" }
+    role { "employee" }
     sequence(:employee_id) { |n| "EMP#{n}" }
 
     trait :admin do
-      role { 'admin' }
+      role { "admin" }
     end
   end
 
@@ -15,12 +15,12 @@ FactoryBot.define do
     sequence(:name) { |n| "Resource #{n}" }
     description { Faker::Company.bs }
     location { "Floor #{rand(1..5)}" }
-    resource_type { 'meeting-room' }
+    resource_type { "meeting-room" }
     is_active { true }
     properties { { capacity: rand(2..20) } }
 
     trait :turf do
-      resource_type { 'turf' }
+      resource_type { "turf" }
     end
   end
 
@@ -46,24 +46,24 @@ FactoryBot.define do
   end
 
   factory :holiday do
-    name { 'Public Holiday' }
+    name { "Public Holiday" }
     holiday_date { Date.today + 7.days }
   end
 
   factory :audit_log do
     association :booking
     association :resource
-    action { 'Status Update' }
+    action { "Status Update" }
     old_status { :pending }
     new_status { :approved }
-    message { 'Booking approved by admin' }
+    message { "Booking approved by admin" }
   end
 
   factory :notification do
     association :user
     association :booking
-    channel { 'email' }
-    notification_type { 'booking_approved' }
+    channel { "email" }
+    notification_type { "booking_approved" }
     sent_at { Time.current }
     is_read { false }
   end

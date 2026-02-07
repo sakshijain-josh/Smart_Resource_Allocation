@@ -5,7 +5,7 @@ class BookingTest < ActiveSupport::TestCase
 
   setup do
     @user = create(:user)
-    @resource = create(:resource, resource_type: 'meeting-room')
+    @resource = create(:resource, resource_type: "meeting-room")
   end
 
   test "valid booking" do
@@ -13,7 +13,7 @@ class BookingTest < ActiveSupport::TestCase
     date = Date.new(2027, 1, 6)
     start_time = Time.utc(date.year, date.month, date.day, 10, 0, 0)
     end_time = Time.utc(date.year, date.month, date.day, 11, 0, 0)
-    
+
     travel_to start_time do
       booking = build(:booking, user: @user, resource: @resource, start_time: start_time, end_time: end_time)
       assert booking.valid?, "Expected booking to be valid, but: #{booking.errors.full_messages}"
@@ -44,7 +44,7 @@ class BookingTest < ActiveSupport::TestCase
     date = Date.new(2027, 1, 6)
     start_time = Time.utc(date.year, date.month, date.day, 7, 0, 0)
     end_time = Time.utc(date.year, date.month, date.day, 8, 0, 0)
-    
+
     travel_to start_time do
       booking = build(:booking, start_time: start_time, end_time: end_time)
       assert_not booking.valid?
@@ -58,7 +58,7 @@ class BookingTest < ActiveSupport::TestCase
     date = Date.new(2027, 1, 9)
     start_time = Time.utc(date.year, date.month, date.day, 10, 0, 0)
     end_time = Time.utc(date.year, date.month, date.day, 11, 0, 0)
-    
+
     travel_to start_time - 1.day do # Travel to Friday
       booking = build(:booking, start_time: start_time, end_time: end_time)
       assert_not booking.valid?
@@ -70,10 +70,10 @@ class BookingTest < ActiveSupport::TestCase
   test "invalid on holidays" do
     holiday_date = Date.new(2027, 1, 1) # New Year
     create(:holiday, holiday_date: holiday_date, name: "New Year's Day")
-    
+
     start_time = Time.utc(holiday_date.year, holiday_date.month, holiday_date.day, 10, 0, 0)
     end_time = Time.utc(holiday_date.year, holiday_date.month, holiday_date.day, 11, 0, 0)
-    
+
     travel_to Time.utc(2026, 12, 31, 10, 0, 0) do
       booking = build(:booking, start_time: start_time, end_time: end_time)
       assert_not booking.valid?
@@ -86,13 +86,13 @@ class BookingTest < ActiveSupport::TestCase
     date = Date.new(2027, 1, 6)
     start1 = Time.utc(date.year, date.month, date.day, 10, 0, 0)
     end1 = Time.utc(date.year, date.month, date.day, 11, 0, 0)
-    
+
     create(:booking, resource: @resource, start_time: start1, end_time: end1, status: :approved)
 
     # Overlapping booking
     start2 = Time.utc(date.year, date.month, date.day, 10, 30, 0)
     end2 = Time.utc(date.year, date.month, date.day, 11, 30, 0)
-    
+
     booking2 = build(:booking, resource: @resource, start_time: start2, end_time: end2)
     assert_not booking2.valid?
     assert_includes booking2.errors[:base], "This resource is already booked (Approved) for the selected time slot"
@@ -101,7 +101,7 @@ class BookingTest < ActiveSupport::TestCase
 
   test "audit log created on status change" do
     booking = create(:booking)
-    assert_difference 'AuditLog.count', 1 do
+    assert_difference "AuditLog.count", 1 do
       booking.update!(status: :approved)
     end
     assert_equal "approved", AuditLog.last.new_status
@@ -116,7 +116,7 @@ class BookingTest < ActiveSupport::TestCase
 
     # Travel to 11 AM
     travel_to Time.utc(2027, 1, 6, 11, 0, 0) do
-      assert_difference 'Booking.where(status: :auto_released).count', 1 do
+      assert_difference "Booking.where(status: :auto_released).count", 1 do
         Booking.release_expired_bookings
       end
     end

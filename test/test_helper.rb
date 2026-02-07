@@ -9,19 +9,19 @@ ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
 require "warden"
-require 'devise/jwt/test_helpers'
+require "devise/jwt/test_helpers"
 
 module ActiveSupport
   class TestCase
     include FactoryBot::Syntax::Methods
     include Devise::Test::IntegrationHelpers
     include Warden::Test::Helpers
-    
+
     Warden.test_mode!
-    
+
     # helper for JWT auth in integration tests
     def auth_headers(user)
-      headers = { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }
+      headers = { "Accept" => "application/json", "Content-Type" => "application/json" }
       Devise::JWT::TestHelpers.auth_headers(headers, user)
     end
     # Run tests in parallel with specified workers

@@ -4,7 +4,7 @@ class Api::V1::ReportsController < ApplicationController
   # GET /api/v1/reports/resource_usage
   def resource_usage
     # Count approved and auto_released bookings per resource
-    usage = Booking.where(status: [:approved, :auto_released])
+    usage = Booking.where(status: [ :approved, :auto_released ])
                    .group(:resource_id)
                    .count
                    .map do |resource_id, count|
@@ -16,9 +16,9 @@ class Api::V1::ReportsController < ApplicationController
                        total_bookings: count
                      }
                    end
-    
-    render json: { 
-      report_type: 'resource_usage',
+
+    render json: {
+      report_type: "resource_usage",
       data: usage.sort_by { |u| -u[:total_bookings] }
     }
   end
@@ -26,7 +26,7 @@ class Api::V1::ReportsController < ApplicationController
   # GET /api/v1/reports/user_bookings
   def user_bookings
     # Count approved bookings per user
-    user_data = Booking.where(status: [:approved, :auto_released])
+    user_data = Booking.where(status: [ :approved, :auto_released ])
                        .group(:user_id)
                        .count
                        .map do |user_id, count|
@@ -39,7 +39,7 @@ class Api::V1::ReportsController < ApplicationController
                        end
 
     render json: {
-      report_type: 'user_bookings_summary',
+      report_type: "user_bookings_summary",
       data: user_data.sort_by { |u| -u[:total_approved_bookings] }
     }
   end
@@ -47,14 +47,14 @@ class Api::V1::ReportsController < ApplicationController
   # GET /api/v1/reports/peak_hours
   def peak_hours
     # Analyze start_time hours for approved bookings
-    hour_counts = Booking.where(status: [:approved, :auto_released])
+    hour_counts = Booking.where(status: [ :approved, :auto_released ])
                          .pluck(:start_time)
                          .map { |t| t.hour }
                          .tally
                          .map { |hour, count| { hour: "#{hour}:00", bookings: count } }
-    
+
     render json: {
-      report_type: 'peak_hours_analysis',
+      report_type: "peak_hours_analysis",
       data: hour_counts.sort_by { |h| h[:hour].to_i }
     }
   end
@@ -63,9 +63,9 @@ class Api::V1::ReportsController < ApplicationController
 
   def require_admin!
     unless current_user&.admin?
-      render json: { 
-        error: 'Forbidden', 
-        message: 'You do not have permission to access reports' 
+      render json: {
+        error: "Forbidden",
+        message: "You do not have permission to access reports"
       }, status: :forbidden
     end
   end

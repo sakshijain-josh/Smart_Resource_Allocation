@@ -2,23 +2,23 @@ module Api
   module V1
     class ResourcesController < ApplicationController
       # before_action :authenticate_user! is inherited from ApplicationController
-      
-      before_action :set_resource, only: [:show, :availability, :update, :destroy]
-      
+
+      before_action :set_resource, only: [ :show, :availability, :update, :destroy ]
+
       # GET /api/v1/resources
       def index
         authorize! :read, Resource
         @resources = Resource.all
-        
+
         # Apply filters if present
         @resources = @resources.where(resource_type: params[:resource_type]) if params[:resource_type].present?
         @resources = @resources.where(location: params[:location]) if params[:location].present?
         @resources = @resources.where(is_active: params[:is_active]) if params[:is_active].present?
 
         # Pagination
-        limit = (params[:limit] || 10).to_i
+        limit = (params[:limit] || ENV.fetch("DEFAULT_API_LIMIT", 10)).to_i
         offset = (params[:offset] || 0).to_i
-        
+
         total_count = @resources.count
         paginated_resources = @resources.limit(limit).offset(offset)
 
@@ -40,7 +40,7 @@ module Api
       # GET /api/v1/resources/:id/availability
       def availability
         authorize! :availability, @resource
-        
+
         # Get optional query parameters with robust parsing
         begin
           date = params[:date].present? ? Date.parse(params[:date].to_s) : Date.today
@@ -50,10 +50,10 @@ module Api
 
         duration = params[:duration].to_f
         duration = 1.0 if duration <= 0
-        
+
         # Calculate available slots
         slots = @resource.available_slots(date, duration)
-        
+
         # Render availability info
         render json: {
           resource_id: @resource.id,

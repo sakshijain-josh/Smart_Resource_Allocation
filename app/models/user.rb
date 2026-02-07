@@ -21,11 +21,11 @@ class User < ApplicationRecord
 
   # Role helper methods
   def admin?
-    role == 'admin'
+    role == "admin"
   end
 
   def employee?
-    role == 'employee'
+    role == "employee"
   end
 
   # --- JSON Ordering ---

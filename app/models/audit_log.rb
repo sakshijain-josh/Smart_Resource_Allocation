@@ -1,7 +1,7 @@
 class AuditLog < ApplicationRecord
   belongs_to :booking, optional: true
   belongs_to :resource, optional: true
-  belongs_to :performer, class_name: 'User', foreign_key: 'performed_by'
+  belongs_to :performer, class_name: "User", foreign_key: "performed_by"
 
   enum :old_status, {
     pending: 0,
