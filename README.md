@@ -2,7 +2,7 @@
 
 A controlled-access web platform for managing shared office resources through an admin-governed booking workflow. This system enforces conflict-free scheduling, approval-based allocation, and utilization tracking.
 
-## 🔑 Key Features
+## Key Features
 
 - **Admin-Only User Provisioning**: No public signup - all accounts are created by administrators
 - **JWT Authentication**: Secure, stateless token-based authentication
@@ -15,7 +15,7 @@ A controlled-access web platform for managing shared office resources through an
 - **Notifications**: Email notifications for booking updates
 
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -41,15 +41,13 @@ bin/rails server
 The API will be available at `http://localhost:3000`
 
 ### Default Admin Credentials
-
 After running `db:seed`:
-
 - **Email**: `legacythreads11@gmail.com`
 - **Password**: `123456789`
 
-⚠️ **Change these credentials in production!**
+**Change these credentials in production!**
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run all tests
@@ -62,7 +60,7 @@ bin/rails test test/models/user_test.rb
 COVERAGE=true bin/rails test
 ```
 
-## 📡 API Overview
+## API Overview
 
 ### Authentication
 
@@ -93,9 +91,7 @@ DELETE /api/v1/users/:id  # Delete user
 - **Background Jobs**: Sidekiq 
 - **Testing**: Minitest
 
-
-
-## 📊 System Constraints
+## System Constraints
 
 - **Office Hours**: Mon-Fri, 9am-6pm only
 - **Time Slots**: 30-minute granularity
@@ -103,7 +99,7 @@ DELETE /api/v1/users/:id  # Delete user
 - **No Self-Registration**: Admin creates all accounts
 - **No Checkout Tracking**: Only check-in is tracked
 
-## 🔒 Security Considerations
+## Security Considerations
 
 1. **No Public Signup**: Prevents fake accounts and maintains audit integrity
 2. **JWT Expiration**: Tokens expire after 24 hours
@@ -112,6 +108,5 @@ DELETE /api/v1/users/:id  # Delete user
 5. **HTTPS Required**: All production traffic must use HTTPS
 6. **Audit Logs**: Immutable trail of all administrative actions
 
-## 🤝 Contributions:
+##  Contributions:
 - Backend was developed by - [@sakshi04_ui](https://github.com/sakshi04-ui)
-- Frontend was developed by - @sobiyas22
