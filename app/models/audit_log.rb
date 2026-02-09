@@ -32,8 +32,8 @@ class AuditLog < ApplicationRecord
       old_status: old_status,
       new_status: new_status,
       message: message,
-      created_at: created_at,
-      updated_at: updated_at
+      created_at: created_at&.in_time_zone&.strftime("%Y-%m-%dT%H:%M:%S"),
+      updated_at: updated_at&.in_time_zone&.strftime("%Y-%m-%dT%H:%M:%S")
     }
   end
 end

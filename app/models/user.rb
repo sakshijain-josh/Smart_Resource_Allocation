@@ -9,6 +9,10 @@ class User < ApplicationRecord
          :lockable,
          :timeoutable,
          jwt_revocation_strategy: JwtDenylist
+  
+  # Associations
+  has_many :bookings, dependent: :destroy
+  has_many :notifications, dependent: :destroy
 
   # Callbacks
   after_create_commit :send_welcome_email
@@ -36,8 +40,8 @@ class User < ApplicationRecord
       name: name,
       email: email,
       role: role,
-      created_at: created_at,
-      updated_at: updated_at
+      created_at: created_at&.in_time_zone&.strftime("%Y-%m-%dT%H:%M:%S"),
+      updated_at: updated_at&.in_time_zone&.strftime("%Y-%m-%dT%H:%M:%S")
     }
   end
 

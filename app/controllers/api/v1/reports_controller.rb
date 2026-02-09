@@ -48,14 +48,56 @@ class Api::V1::ReportsController < ApplicationController
   def peak_hours
     # Analyze start_time hours for approved bookings
     hour_counts = Booking.where(status: [ :approved, :auto_released ])
-                         .pluck(:start_time)
+                         .pluck(:start_time) # fevthes single coumn while pick fetch single row from db
                          .map { |t| t.hour }
-                         .tally
+                         .tally # Har value kitni baar aayi, uska count bata do.
                          .map { |hour, count| { hour: "#{hour}:00", bookings: count } }
 
     render json: {
       report_type: "peak_hours_analysis",
       data: hour_counts.sort_by { |h| h[:hour].to_i }
+    }
+  end
+
+  # GET /api/v1/reports/utilization
+  def utilization
+    # Count approved and auto_released bookings per resource
+    usage_counts = Booking.where(status: [ :approved, :auto_released ])
+                          .group(:resource_id)
+                          .count
+
+    all_resources = Resource.all
+    resource_data = all_resources.map do |resource|
+      {
+        resource_id: resource.id,
+        resource_name: resource.name,
+        resource_type: resource.resource_type,
+        total_bookings: usage_counts[resource.id] || 0
+      }
+    end
+
+    # Sort by total bookings descending
+    sorted_resources = resource_data.sort_by { |r| -r[:total_bookings] }
+
+    # Define thresholds
+    # Over-utilized: Top 25% (at least 1 booking)
+    # Under-utilized: Bottom 25% (or 0 bookings)
+    
+    threshold_count = (sorted_resources.size * 0.25).ceil
+    threshold_count = 1 if threshold_count < 1 && sorted_resources.size > 0
+
+    over_utilised = sorted_resources.first(threshold_count).select { |r| r[:total_bookings] > 0 }
+    under_utilised = sorted_resources.last(threshold_count)
+
+    render json: {
+      report_type: "resource_utilization",
+      over_utilised: over_utilised,
+      under_utilised: under_utilised,
+      summary: {
+        total_resources: all_resources.size,
+        over_utilised_count: over_utilised.size,
+        under_utilised_count: under_utilised.size
+      }
     }
   end
 

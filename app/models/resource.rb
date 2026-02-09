@@ -27,9 +27,9 @@ class Resource < ApplicationRecord
     work_end_hour = ENV.fetch("BUSINESS_HOURS_END", 18).to_i
 
     slots = []
-    # Use Time.utc to ensure we stay on the correct day
-    current_time = Time.utc(date.year, date.month, date.day, work_start_hour)
-    end_time = Time.utc(date.year, date.month, date.day, work_end_hour)
+    # Use Time.zone.local to ensure we use the configured timezone (IST)
+    current_time = Time.zone.local(date.year, date.month, date.day, work_start_hour)
+    end_time = Time.zone.local(date.year, date.month, date.day, work_end_hour)
 
     # Get all approved bookings for this resource on the given date
     approved_bookings = bookings.where(status: :approved)
@@ -47,8 +47,8 @@ class Resource < ApplicationRecord
       end
 
       slot_info = {
-        start_time: current_time,
-        end_time: slot_end,
+        start_time: current_time.in_time_zone.strftime("%Y-%m-%dT%H:%M:%S"),
+        end_time: slot_end.in_time_zone.strftime("%Y-%m-%dT%H:%M:%S"),
         available: conflicting_booking.nil?
       }
 
@@ -76,8 +76,8 @@ class Resource < ApplicationRecord
       location: location,
       is_active: is_active,
       properties: properties,
-      created_at: created_at,
-      updated_at: updated_at
+      created_at: created_at&.in_time_zone&.strftime("%Y-%m-%dT%H:%M:%S"),
+      updated_at: updated_at&.in_time_zone&.strftime("%Y-%m-%dT%H:%M:%S")
     }
   end
 

@@ -45,13 +45,13 @@ class Booking < ApplicationRecord
       resource_id: resource_id,
       resource_name: resource&.name,
       status: status,
-      start_time: start_time,
-      end_time: end_time,
-      approved_at: approved_at,
-      cancelled_at: cancelled_at,
-      checked_in_at: checked_in_at,
-      created_at: created_at,
-      updated_at: updated_at
+      start_time: start_time&.in_time_zone&.strftime("%Y-%m-%dT%H:%M:%S"),
+      end_time: end_time&.in_time_zone&.strftime("%Y-%m-%dT%H:%M:%S"),
+      approved_at: approved_at&.in_time_zone&.strftime("%Y-%m-%dT%H:%M:%S"),
+      cancelled_at: cancelled_at&.in_time_zone&.strftime("%Y-%m-%dT%H:%M:%S"),
+      checked_in_at: checked_in_at&.in_time_zone&.strftime("%Y-%m-%dT%H:%M:%S"),
+      created_at: created_at&.in_time_zone&.strftime("%Y-%m-%dT%H:%M:%S"),
+      updated_at: updated_at&.in_time_zone&.strftime("%Y-%m-%dT%H:%M:%S")
     }
   end
 
