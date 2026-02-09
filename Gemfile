@@ -41,6 +41,9 @@ group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
   gem "factory_bot_rails"
   gem "faker"
+  gem "rspec-rails"
+  gem "shoulda-matchers"
+  gem "database_cleaner-active_record"
 
   # Load environment variables from .env
   gem "dotenv-rails"
