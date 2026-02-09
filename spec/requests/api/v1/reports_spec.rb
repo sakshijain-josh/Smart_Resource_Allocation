@@ -43,4 +43,17 @@ RSpec.describe "Api::V1::Reports", type: :request do
       puts "✅ PASS: Admin can access peak hours analysis (Normal Case)"
     end
   end
+
+  describe "GET /api/v1/reports/utilization" do
+    it "allows admin to access resource utilization report" do
+      get api_v1_reports_utilization_path, headers: auth_headers(admin), as: :json
+      expect(response).to have_http_status(:success)
+      json = JSON.parse(response.body)
+      expect(json["report_type"]).to eq("resource_utilization")
+      expect(json).to have_key("over_utilised")
+      expect(json).to have_key("under_utilised")
+      expect(json).to have_key("summary")
+      puts "✅ PASS: Admin can access resource utilization report (Normal Case)"
+    end
+  end
 end

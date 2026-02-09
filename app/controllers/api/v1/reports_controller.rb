@@ -59,6 +59,48 @@ class Api::V1::ReportsController < ApplicationController
     }
   end
 
+  # GET /api/v1/reports/utilization
+  def utilization
+    # Count approved and auto_released bookings per resource
+    usage_counts = Booking.where(status: [ :approved, :auto_released ])
+                          .group(:resource_id)
+                          .count
+
+    all_resources = Resource.all
+    resource_data = all_resources.map do |resource|
+      {
+        resource_id: resource.id,
+        resource_name: resource.name,
+        resource_type: resource.resource_type,
+        total_bookings: usage_counts[resource.id] || 0
+      }
+    end
+
+    # Sort by total bookings descending
+    sorted_resources = resource_data.sort_by { |r| -r[:total_bookings] }
+
+    # Define thresholds
+    # Over-utilized: Top 25% (at least 1 booking)
+    # Under-utilized: Bottom 25% (or 0 bookings)
+    
+    threshold_count = (sorted_resources.size * 0.25).ceil
+    threshold_count = 1 if threshold_count < 1 && sorted_resources.size > 0
+
+    over_utilised = sorted_resources.first(threshold_count).select { |r| r[:total_bookings] > 0 }
+    under_utilised = sorted_resources.last(threshold_count)
+
+    render json: {
+      report_type: "resource_utilization",
+      over_utilised: over_utilised,
+      under_utilised: under_utilised,
+      summary: {
+        total_resources: all_resources.size,
+        over_utilised_count: over_utilised.size,
+        under_utilised_count: under_utilised.size
+      }
+    }
+  end
+
   private
 
   def require_admin!

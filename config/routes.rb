@@ -50,6 +50,7 @@ Rails.application.routes.draw do
         get :resource_usage
         get :user_bookings
         get :peak_hours
+        get :utilization
       end
     end
   end

@@ -29,8 +29,8 @@ RSpec.describe "Api::V1::Bookings", type: :request do
 
   describe "POST /api/v1/bookings" do
     let(:date) { Date.new(2027, 1, 6) }
-    let(:start_time) { Time.utc(date.year, date.month, date.day, 10, 0, 0) }
-    let(:end_time) { Time.utc(date.year, date.month, date.day, 11, 0, 0) }
+    let(:start_time) { Time.zone.local(date.year, date.month, date.day, 10, 0, 0) }
+    let(:end_time) { Time.zone.local(date.year, date.month, date.day, 11, 0, 0) }
 
     it "creates a booking for authorized user" do
       expect {
@@ -62,8 +62,8 @@ RSpec.describe "Api::V1::Bookings", type: :request do
       resource1 = create(:resource, resource_type: "meeting-room")
       resource2 = create(:resource, resource_type: "meeting-room")
 
-      start_time_conflict = Time.utc(2027, 2, 1, 10, 0, 0)
-      end_time_conflict = Time.utc(2027, 2, 1, 11, 0, 0)
+      start_time_conflict = Time.zone.local(2027, 2, 1, 10, 0, 0)
+      end_time_conflict = Time.zone.local(2027, 2, 1, 11, 0, 0)
       create(:booking, :approved, resource: resource1, start_time: start_time_conflict, end_time: end_time_conflict)
 
       # Try to create an overlapping booking on resource1

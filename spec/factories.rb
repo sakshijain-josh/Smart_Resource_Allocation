@@ -28,8 +28,8 @@ FactoryBot.define do
     association :user
     association :resource
     # Set to a Wednesday at 10 AM in the future (Jan 6, 2027)
-    start_time { Time.utc(2027, 1, 6, 10, 0, 0) }
-    end_time { Time.utc(2027, 1, 6, 11, 0, 0) }
+    start_time { Time.zone.local(2027, 1, 6, 10, 0, 0) }
+    end_time { Time.zone.local(2027, 1, 6, 11, 0, 0) }
     status { :pending }
     allow_smaller_capacity { false }
 

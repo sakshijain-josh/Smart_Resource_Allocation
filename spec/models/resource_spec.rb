@@ -41,14 +41,14 @@ RSpec.describe Resource, type: :model do
 
     it "detects conflicts with approved bookings" do
       user = create(:user)
-      # Create an approved booking from 10 AM to 11 AM
-      date = Date.today
-      start_time = Time.utc(date.year, date.month, date.day, 10, 0, 0)
-      end_time = Time.utc(date.year, date.month, date.day, 11, 0, 0)
+      # Create an approved booking from 10 AM to 11 AM on a future date
+      date = Date.new(2027, 1, 6) # Wednesday
+      start_time = Time.zone.local(date.year, date.month, date.day, 10, 0, 0)
+      end_time = Time.zone.local(date.year, date.month, date.day, 11, 0, 0)
       create(:booking, resource: resource, user: user, start_time: start_time, end_time: end_time, status: :approved)
 
       slots = resource.available_slots(date)
-      ten_am_slot = slots.find { |s| s[:start_time].hour == 10 }
+      ten_am_slot = slots.find { |s| Time.zone.parse(s[:start_time]).hour == 10 }
 
       expect(ten_am_slot[:available]).to be false
       expect(ten_am_slot[:booked_by]).to eq(user.name)
