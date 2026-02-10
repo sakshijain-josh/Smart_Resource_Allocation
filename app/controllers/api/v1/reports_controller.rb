@@ -47,7 +47,7 @@ class Api::V1::ReportsController < ApplicationController
   # GET /api/v1/reports/peak_hours
   def peak_hours
     # Analyze start_time hours for approved bookings
-    hour_counts = Booking.where(status: [ :approved, :auto_released ])
+    hour_counts = Booking.where(status: [ :approved, :auto_released, :expired, :cancelled_by_user, :checked_in ])
                          .pluck(:start_time) # fevthes single coumn while pick fetch single row from db
                          .map { |t| t.hour }
                          .tally # Har value kitni baar aayi, uska count bata do.

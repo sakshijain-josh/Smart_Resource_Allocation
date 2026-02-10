@@ -56,6 +56,16 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  gem 'rswag-api'
+  gem 'rswag-ui'
+  
+   
+end
+
+group :development, :test do
+    gem 'rspec-rails'
+    gem 'rswag-specs'
 end
 
 group :test do

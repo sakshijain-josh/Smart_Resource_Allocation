@@ -1,0 +1,98 @@
+// Use DBML to define your database schema
+// https://www.dbml.org/
+
+Table users {
+  id bigint [pk, increment]
+  email string [not null, unique]
+  employee_id string [not null, unique]
+  name string [not null]
+  role string [not null, default: 'employee', note: 'employee/admin']
+  encrypted_password string [not null]
+  failed_attempts integer [default: 0]
+  locked_at datetime
+  sign_in_count integer [default: 0]
+  current_sign_in_at datetime
+  last_sign_in_at datetime
+  created_at datetime [not null]
+  updated_at datetime [not null]
+}
+
+Table resources {
+  id bigint [pk, increment]
+  name string [not null, unique]
+  resource_type string [not null, note: 'meeting-room, laptop, phone, turf']
+  description text
+  location string
+  is_active boolean [default: true]
+  properties jsonb
+  created_at datetime [not null]
+  updated_at datetime [not null]
+}
+
+Table bookings {
+  id bigint [pk, increment]
+  user_id bigint [not null, ref: > users.id]
+  resource_id bigint [not null, ref: > resources.id]
+  start_time datetime [not null]
+  end_time datetime [not null]
+  status integer [not null, default: 0, note: 'pending: 0, approved: 1, rejected: 2, expired: 3, auto_released: 4, cancelled_by_user: 5']
+  approved_at datetime
+  cancelled_at datetime
+  checked_in_at datetime
+  auto_released_at datetime
+  admin_note text
+  allow_smaller_capacity boolean
+  created_at datetime [not null]
+  updated_at datetime [not null]
+
+  indexes {
+    (resource_id, start_time, end_time)
+    (user_id, start_time)
+    status
+  }
+}
+
+Table audit_logs {
+  id bigint [pk, increment]
+  booking_id bigint [ref: > bookings.id]
+  resource_id bigint [ref: > resources.id]
+  performed_by bigint [ref: > users.id, note: 'Reference to the user who performed the action']
+  action string [not null]
+  old_status integer
+  new_status integer
+  message text
+  created_at datetime [not null]
+  updated_at datetime [not null]
+}
+
+Table notifications {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  booking_id bigint [ref: > bookings.id]
+  notification_type string [not null]
+  channel string [not null]
+  sent_at datetime [not null]
+  is_read boolean [default: false]
+  created_at datetime [not null]
+  updated_at datetime [not null]
+
+  indexes {
+    (user_id, is_read)
+  }
+}
+
+Table holidays {
+  id bigint [pk, increment]
+  name string
+  holiday_date date [not null]
+  created_at datetime [not null]
+  updated_at datetime [not null]
+}
+
+Table jwt_denylists {
+  id bigint [pk, increment]
+  jti string [not null, unique]
+  exp datetime [not null]
+  created_at datetime [not null]
+  updated_at datetime [not null]
+}
