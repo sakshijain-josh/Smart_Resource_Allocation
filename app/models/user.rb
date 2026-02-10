@@ -51,3 +51,13 @@ class User < ApplicationRecord
     UserMailer.welcome_email(self).deliver_now
   end
 end
+
+
+# destroy nako resource,booking
+# jar inactive ekla tr error yayla pahije or user la notify jhala pahije
+# fix graph
+# dashboard api update
+# filtering in backend
+# auto reject if one approved
+# full name is should be maximum 100 chars
+# 

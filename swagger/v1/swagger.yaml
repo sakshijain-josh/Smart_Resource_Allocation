@@ -1,0 +1,1220 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Resource Allocator API V1",
+    "version": "v1",
+    "description": "API for Managing Resources and Bookings"
+  },
+  "paths": {
+    "/api/v1/auth/login": {
+      "post": {
+        "summary": "Logs in a user",
+        "tags": [
+          "Authentication"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "legacythreads11@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "123456789"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "delete": {
+        "summary": "Logs out a user",
+        "tags": [
+          "Authentication"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "logout successful"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "summary": "Returns current user information",
+        "tags": [
+          "Authentication"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/bookings": {
+      "get": {
+        "summary": "Lists all bookings",
+        "tags": [
+          "Bookings"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "resource_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedBookings"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Creates a booking",
+        "tags": [
+          "Bookings"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "booking created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Booking"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "unprocessable entity (overlap)"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "resource_id": {
+                    "type": "integer"
+                  },
+                  "start_time": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "end_time": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "resource_id",
+                  "start_time",
+                  "end_time"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bookings/{id}/check_in": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Checks in to an approved booking",
+        "tags": [
+          "Bookings"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "check-in successful"
+          },
+          "403": {
+            "description": "forbidden (not approved or wrong user)"
+          }
+        }
+      }
+    },
+    "/api/v1/bookings/release_expired": {
+      "post": {
+        "summary": "Releases expired bookings (Admin only)",
+        "tags": [
+          "Bookings"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "release successful"
+          },
+          "403": {
+            "description": "forbidden (Employee cannot trigger)"
+          }
+        }
+      }
+    },
+    "/api/v1/reports/resource_usage": {
+      "get": {
+        "summary": "Retrieves resource usage report (Admin only)",
+        "tags": [
+          "Reports"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceUsageReport"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "forbidden (Employee cannot access)"
+          }
+        }
+      }
+    },
+    "/api/v1/reports/user_bookings": {
+      "get": {
+        "summary": "Retrieves user bookings summary (Admin only)",
+        "tags": [
+          "Reports"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserBookingsReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reports/peak_hours": {
+      "get": {
+        "summary": "Retrieves peak hours analysis (Admin only)",
+        "tags": [
+          "Reports"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeakHoursReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reports/utilization": {
+      "get": {
+        "summary": "Retrieves resource utilization report (Admin only)",
+        "tags": [
+          "Reports"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UtilizationReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/resources": {
+      "get": {
+        "summary": "Lists all resources",
+        "tags": [
+          "Resources"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "resource_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "location",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "is_active",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResources"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Creates a resource (Admin only)",
+        "tags": [
+          "Resources"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "resource created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "forbidden (Employee cannot create)"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "resource_type": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "resource_type"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/resources/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Retrieves a resource",
+        "tags": [
+          "Resources"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Updates a resource (Admin only)",
+        "tags": [
+          "Resources"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "resource updated"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "resource_type": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes a resource (Admin only)",
+        "tags": [
+          "Resources"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "resource deleted"
+          }
+        }
+      }
+    },
+    "/api/v1/resources/{id}/availability": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Checks resource availability",
+        "tags": [
+          "Resources"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "format": "date",
+            "description": "Date to check availability (YYYY-MM-DD)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "duration",
+            "in": "query",
+            "description": "Duration in hours",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "available_slots": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "start_time": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "end_time": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users": {
+      "get": {
+        "summary": "Lists all users (Admin only)",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limit number of users (default 10)",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Offset for pagination (default 0)",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedUsers"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "forbidden"
+          }
+        }
+      },
+      "post": {
+        "summary": "Creates a user (Admin only)",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "user created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "employee_id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "employee",
+                      "admin"
+                    ]
+                  }
+                },
+                "required": [
+                  "employee_id",
+                  "name",
+                  "email",
+                  "password",
+                  "role"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "delete": {
+        "summary": "Deletes a user (Admin only)",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "user deleted"
+          },
+          "403": {
+            "description": "forbidden (cannot delete self)"
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://{defaultHost}",
+      "variables": {
+        "defaultHost": {
+          "default": "localhost:3000"
+        }
+      }
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearer_auth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "employee_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "employee",
+              "admin"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "employee_id",
+          "name",
+          "email",
+          "role"
+        ]
+      },
+      "Resource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "resource_type": {
+            "type": "string",
+            "enum": [
+              "meeting-room",
+              "laptop",
+              "phone",
+              "turf"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "properties": {
+            "type": "object",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "resource_type",
+          "is_active"
+        ]
+      },
+      "Booking": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "type": "integer"
+          },
+          "employee_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "employee_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "resource_id": {
+            "type": "integer"
+          },
+          "resource_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "rejected",
+              "expired",
+              "auto_released",
+              "cancelled_by_user"
+            ]
+          },
+          "start_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "approved_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "cancelled_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "checked_in_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "resource_id",
+          "status",
+          "start_time",
+          "end_time"
+        ]
+      },
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": [
+          "token",
+          "user"
+        ]
+      },
+      "PaginatedUsers": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "has_more": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "users",
+          "total",
+          "limit",
+          "offset",
+          "has_more"
+        ]
+      },
+      "PaginatedResources": {
+        "type": "object",
+        "properties": {
+          "resources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Resource"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "has_more": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "resources",
+          "total",
+          "limit",
+          "offset",
+          "has_more"
+        ]
+      },
+      "PaginatedBookings": {
+        "type": "object",
+        "properties": {
+          "bookings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Booking"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "has_more": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "bookings",
+          "total",
+          "limit",
+          "offset",
+          "has_more"
+        ]
+      },
+      "ResourceUsageReport": {
+        "type": "object",
+        "properties": {
+          "report_type": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "resource_id": {
+                  "type": "integer"
+                },
+                "resource_name": {
+                  "type": "string"
+                },
+                "resource_type": {
+                  "type": "string"
+                },
+                "total_bookings": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "UserBookingsReport": {
+        "type": "object",
+        "properties": {
+          "report_type": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "user_id": {
+                  "type": "integer"
+                },
+                "user_name": {
+                  "type": "string"
+                },
+                "total_approved_bookings": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "PeakHoursReport": {
+        "type": "object",
+        "properties": {
+          "report_type": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "hour": {
+                  "type": "string"
+                },
+                "bookings": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "UtilizationReport": {
+        "type": "object",
+        "properties": {
+          "report_type": {
+            "type": "string"
+          },
+          "over_utilised": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Resource"
+            }
+          },
+          "under_utilised": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Resource"
+            }
+          },
+          "summary": {
+            "type": "object",
+            "properties": {
+              "total_resources": {
+                "type": "integer"
+              },
+              "over_utilised_count": {
+                "type": "integer"
+              },
+              "under_utilised_count": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+      "error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "errors": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
